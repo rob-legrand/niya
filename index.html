@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en-US"><head>
+
+<meta charset="UTF-8" />
+<title>Niya</title>
+
+<link href="style.css" rel="stylesheet" />
+<meta name="viewport" content="initial-scale=1, width=device-width" />
+
+</head><body>
+
+<h1>Niya</h1>
+
+<div class="game">
+   <div class="game-area" id="gameboard"></div>
+   <div>
+      <div class="game-area" id="next-player-area">
+         Next player:
+         <div id="next-player"></div>
+      </div>
+      <div class="game-area" id="last-card-area">
+         Last card:
+         <div id="last-card"></div>
+      </div>
+      <div class="game-area" id="result-area">
+         Winner:
+         <div id="result"></div>
+      </div>
+   </div>
+</div>
+
+<label><input id="ai-player1" type="checkbox" />&nbsp;Player 1 is computer</label>
+<label><input id="ai-player2" type="checkbox" />&nbsp;Player 2 is computer</label>
+<button id="start-new-game" type="button">Start a new game</button>
+<button id="eval-moves" type="button">Evaluate moves</button>
+<textarea id="debug-output" rows="80"></textarea>
+
+<script src="script.js"></script>
+
+</body></html>

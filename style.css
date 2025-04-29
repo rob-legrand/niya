@@ -1,0 +1,116 @@
+@charset "UTF-8";
+
+html {
+   box-sizing: border-box;
+   touch-action: manipulation;
+}
+
+*, *:before, *:after {
+   box-sizing: inherit;
+}
+
+body {
+   align-items: center;
+   background-color: rgb(255, 250, 245);
+   display: flex;
+   flex-direction: column;
+   font-family: Georgia, serif;
+   justify-content: center;
+}
+
+h1 {
+   color: rgb(34, 68, 102);
+   text-align: center;
+}
+
+.game {
+   align-items: center;
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+}
+
+.game-area {
+   align-items: center;
+   background-color: rgb(255, 255, 170);
+   border-color: rgb(170, 170, 170);
+   border-style: solid;
+   border-width: 10px;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   margin: 10px;
+   padding: 10px;
+}
+
+.row {
+   align-items: center;
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+}
+
+.space {
+   align-items: center;
+   background-color: rgb(85, 85, 85);
+   border-color: rgb(170, 170, 170);
+   border-style: solid;
+   border-width: 10px;
+   color: rgb(255, 255, 255);
+   display: flex;
+   height: 100px;
+   justify-content: center;
+   margin: 10px;
+   padding: 10px;
+   width: 100px;
+}
+
+.space.a {
+   border-color: rgb(85, 170, 255);
+}
+
+.space.b {
+   border-color: rgb(170, 255, 85);
+}
+
+.space.c {
+   border-color: rgb(255, 85, 170);
+}
+
+.space.d {
+   border-color: rgb(170, 170, 170);
+}
+
+.space.e {
+   border-style: dashed;
+}
+
+.space.f {
+   border-style: dotted;
+}
+
+.space.g {
+   border-style: solid;
+}
+
+.space.h {
+   border-style: double;
+}
+
+.space.legal-move {
+   background-color: rgb(0, 0, 0);
+   cursor: pointer;
+}
+
+.space.token {
+   border-color: rgb(170, 170, 170);
+   border-radius: 50px;
+}
+
+.space.token.player1 {
+   background-color: rgb(0, 85, 0);
+}
+
+.space.token.player2 {
+   background-color: rgb(85, 0, 0);
+}
