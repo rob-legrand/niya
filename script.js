@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       util = {
          createGame: function (oldGame) {
-            var boardRow, boardSize, cards, newGame;
+            var boardRow, boardSize, cards, newGame, whichCard;
             boardSize = 4;
             cards = [];
             while (cards.length < boardSize * boardSize) {
@@ -38,7 +38,9 @@ document.addEventListener('DOMContentLoaded', function () {
             while (newGame.board.length < boardSize) {
                boardRow = [];
                while (boardRow.length < boardSize) {
-                  boardRow = boardRow.concat(cards.splice(Math.floor(Math.random() * cards.length), 1));
+                  whichCard = Math.floor(Math.random() * cards.length);
+                  boardRow.push(cards[whichCard]);
+                  cards = cards.slice(0, whichCard).concat(cards.slice(whichCard + 1));
                }
                newGame.board.push(boardRow);
             }
@@ -181,27 +183,40 @@ document.addEventListener('DOMContentLoaded', function () {
          },
          makeMove: function (oldGame, moveToMake) {
             var newGame;
-            if (self.isLegalMove(oldGame, moveToMake)) {
-               newGame = util.createGame(oldGame);
-               newGame.lastCard = newGame.board[moveToMake.row][moveToMake.column];
-               newGame.board[moveToMake.row][moveToMake.column] = newGame.nextPlayer;
-               newGame.nextPlayer = newGame.nextPlayer === 1 ? 2 : 1;
-               return util.deepFreeze(newGame);
-            }
-            return oldGame;
-         },
-         makeRandomMove: function (oldGame) {
-            var moveToMake;
-            if (self.isGameOver(oldGame)) {
+            if (!self.isLegalMove(oldGame, moveToMake)) {
                return oldGame;
+            }
+            newGame = util.createGame(oldGame);
+            newGame.lastCard = newGame.board[moveToMake.row][moveToMake.column];
+            newGame.board[moveToMake.row][moveToMake.column] = newGame.nextPlayer;
+            newGame.nextPlayer = newGame.nextPlayer === 1 ? 2 : 1;
+            return util.deepFreeze(newGame);
+         },
+         makeRandomMove: function (game) {
+            var moveToMake;
+            if (self.isGameOver(game)) {
+               return game;
             }
             do {
                moveToMake = {
-                  row: Math.floor(Math.random() * oldGame.board.length),
-                  column: Math.floor(Math.random() * oldGame.board[0].length)
+                  row: Math.floor(Math.random() * game.board.length),
+                  column: Math.floor(Math.random() * game.board[0].length)
                };
-            } while (!self.isLegalMove(oldGame, moveToMake));
-            return self.makeMove(oldGame, moveToMake);
+            } while (!self.isLegalMove(game, moveToMake));
+            return self.makeMove(game, moveToMake);
+         },
+         makeSmartMove: function (game, depth) {
+            var moveToMake;
+            if (self.isGameOver(game)) {
+               return game;
+            }
+            moveToMake = (function (bestMoves) {
+               return bestMoves.moves[Math.floor(Math.random() * bestMoves.moves.length)];
+            }(
+               // FIXME {value: v, moves: [{row: r1, column: c1}, {row: r2, column: c2}]}
+               // reduce, etc.
+            ));
+            return self.makeMove(game, moveToMake);
          },
          numAvailableSpaces: function (game) {
             return game.board.reduce(function (matrixSumSoFar, row) {
@@ -220,13 +235,26 @@ document.addEventListener('DOMContentLoaded', function () {
          valueToPlayer: function (game, player, depth) {
             var bestValue;
             if (self.hasPlayerWon(game, player)) {
-               return self.numAvailableSpaces(game) + 1;
+               return (self.numAvailableSpaces(game) + 1) * 1000;
             }
             if (self.hasPlayerWon(game, player === 1 ? 2 : 1)) {
-               return -(self.numAvailableSpaces(game) + 1);
+               return -(self.numAvailableSpaces(game) + 1) * 1000;
             }
-            if (self.isGameDrawn(game) || depth <= 0) {
+            if (self.isGameDrawn(game)) {
                return 0;
+            }
+            if (depth <= 0) {
+               bestValue = 0;
+               // rows
+               game.board.forEach(function (row, whichRow) {
+                  bestValue += (function (counts) {
+                     return counts[0] - counts[1];
+                  }(row.reduce(function (valueSoFar, space, whichColumn) {
+                     return typeof space === 'string' ? valueSoFar : space === player ? [valueSoFar[0] * 5, 0] : [0, valueSoFar[1] * 5];
+                  }, [1, 1])));
+               });
+               // FIXME also do columns, diagonals, 2x2 squares
+               return bestValue;
             }
             bestValue = game.nextPlayer === player ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY;
             game.board.forEach(function (row, whichRow) {
@@ -278,9 +306,9 @@ document.addEventListener('DOMContentLoaded', function () {
                   spaceElement.classList.add('player' + space);
                }
                if (niya.isLegalMove(niyaGame, {
-                  row: whichRow,
-                  column: whichColumn
-               })) {
+                     row: whichRow,
+                     column: whichColumn
+                  })) {
                   spaceElement.classList.add('legal-move');
                }
                rowElement.appendChild(spaceElement);
@@ -377,6 +405,29 @@ document.addEventListener('DOMContentLoaded', function () {
                return outputString;
             }());
          }, 0);
+      }, false);
+
+      document.querySelector('#sim-random').addEventListener('click', function () {
+         var d, game, w1, w2;
+         w1 = 0;
+         w2 = 0;
+         d = 0;
+         while (w1 + w2 + d < 10000) {
+            game = niya.createGame();
+            while (!niya.isGameOver(game)) {
+               game = niya.makeRandomMove(game);
+            }
+            if (niya.hasPlayerWon(game, 1)) {
+               w1 += 1;
+            }
+            if (niya.hasPlayerWon(game, 2)) {
+               w2 += 1;
+            }
+            if (niya.isGameDrawn(game)) {
+               d += 1;
+            }
+         }
+         document.querySelector('#debug-output').value = 'P1: ' + w1 + '\nP2: ' + w2 + '\n D: ' + d;
       }, false);
 
       try {
