@@ -5,45 +5,31 @@ document.addEventListener('DOMContentLoaded', function () {
    var niya;
 
    niya = (function () {
-      var deepCopy, self, util;
-
-      deepCopy = function deepCopy(oldThing) {
-         if (Array.isArray(oldThing)) {
-            return oldThing.map(function (currentValue) {
-               return deepCopy(currentValue);
-            });
-         }
-         if (typeof oldThing === 'object') {
-            return Object.keys(oldThing).reduce(function (newObject, prop) {
-               newObject[prop] = deepCopy(oldThing[prop]);
-               return newObject;
-            }, {});
-         }
-         return oldThing;
-      };
+      var self, util;
 
       util = {
          createGame: function (oldGame) {
-            var boardRow, boardSize, cards, newGame, whichCard;
+            var boardSize, newGame;
             boardSize = 4;
-            cards = [];
-            while (cards.length < boardSize * boardSize) {
-               cards.push(String.fromCharCode('a'.charCodeAt(0) + cards.length / boardSize, 'a'.charCodeAt(0) + boardSize + cards.length % boardSize));
-            }
             newGame = {
-               board: [],
+               board: (function () {
+                  var cards;
+                  cards = Array.from({length: boardSize * boardSize}).map(function (ignore, whichCard) {
+                     return String.fromCharCode('a'.charCodeAt(0) + whichCard / boardSize, 'a'.charCodeAt(0) + boardSize + whichCard % boardSize);
+                  });
+                  return Array.from({length: boardSize}).map(function () {
+                     return Array.from({length: boardSize}).map(function () {
+                        var card, whichCard;
+                        whichCard = Math.floor(Math.random() * cards.length);
+                        card = cards[whichCard];
+                        cards = cards.slice(0, whichCard).concat(cards.slice(whichCard + 1));
+                        return card;
+                     });
+                  });
+               }()),
                lastCard: 0,
                nextPlayer: 1
             };
-            while (newGame.board.length < boardSize) {
-               boardRow = [];
-               while (boardRow.length < boardSize) {
-                  whichCard = Math.floor(Math.random() * cards.length);
-                  boardRow.push(cards[whichCard]);
-                  cards = cards.slice(0, whichCard).concat(cards.slice(whichCard + 1));
-               }
-               newGame.board.push(boardRow);
-            }
             oldGame = (function deepCopy(oldThing) {
                if (Array.isArray(oldThing)) {
                   return oldThing.map(function (currentValue) {
@@ -249,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
                game.board.forEach(function (row, whichRow) {
                   bestValue += (function (counts) {
                      return counts[0] - counts[1];
-                  }(row.reduce(function (valueSoFar, space, whichColumn) {
+                  }(row.reduce(function (valueSoFar, space) {
                      return typeof space === 'string' ? valueSoFar : space === player ? [valueSoFar[0] * 5, 0] : [0, valueSoFar[1] * 5];
                   }, [1, 1])));
                });
@@ -316,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function () {
             gameboardElement.appendChild(rowElement);
          });
 
-         Array.prototype.slice.call(gameboardElement.querySelectorAll('.row')).forEach(function (rowElement, whichRow) {
-            Array.prototype.slice.call(rowElement.querySelectorAll('.space')).forEach(function (spaceElement, whichColumn) {
+         Array.from(gameboardElement.querySelectorAll('.row')).forEach(function (rowElement, whichRow) {
+            Array.from(rowElement.querySelectorAll('.space')).forEach(function (spaceElement, whichColumn) {
                spaceElement.addEventListener('click', function () {
                   niyaGame = niya.makeMove(niyaGame, {
                      row: whichRow,
@@ -387,23 +373,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
       document.querySelector('#eval-moves').addEventListener('click', function () {
          setTimeout(function () {
-            document.querySelector('#debug-output').value = (function () {
-               var outputString;
-               outputString = '';
-               niyaGame.board.forEach(function (row, whichRow) {
-                  row.forEach(function (space, whichColumn) {
-                     outputString += ' ' + (niya.isLegalMove(niyaGame, {
-                        row: whichRow,
-                        column: whichColumn
-                     }) ? niya.valueToPlayer(niya.makeMove(niyaGame, {
-                        row: whichRow,
-                        column: whichColumn
-                     }), 1, 3) : '.');
-                  });
-                  outputString += '\n';
-               });
-               return outputString;
-            }());
+            document.querySelector('#debug-output').value = niyaGame.board.map(function (row, whichRow) {
+               return row.map(function (space, whichColumn) {
+                  return (niya.isLegalMove(niyaGame, {
+                     row: whichRow,
+                     column: whichColumn
+                  }) ? niya.valueToPlayer(niya.makeMove(niyaGame, {
+                     row: whichRow,
+                     column: whichColumn
+                  }), 1, 3) : '.');
+               }).join(' ');
+            }).join('\n');
          }, 0);
       }, false);
 
