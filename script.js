@@ -388,11 +388,12 @@ document.addEventListener('DOMContentLoaded', function () {
       }, false);
 
       document.querySelector('#sim-random').addEventListener('click', function () {
-         var d, game, w1, w2;
+         var d, game, moreTimes, w1, w2;
          w1 = 0;
          w2 = 0;
          d = 0;
-         while (w1 + w2 + d < 10000) {
+         moreTimes = 100000;
+         (function keepIterating() {
             game = niya.createGame();
             while (!niya.isGameOver(game)) {
                game = niya.makeRandomMove(game);
@@ -406,8 +407,17 @@ document.addEventListener('DOMContentLoaded', function () {
             if (niya.isGameDrawn(game)) {
                d += 1;
             }
-         }
-         document.querySelector('#debug-output').value = 'P1: ' + w1 + '\nP2: ' + w2 + '\n D: ' + d;
+            document.querySelector('#debug-output').value = 'P1: ' + w1 + ' (' + (100 * w1 / (w1 + w2 + d)).toFixed(2) + '%)\n';
+            document.querySelector('#debug-output').value += 'P2: ' + w2 + ' (' + (100 * w2 / (w1 + w2 + d)).toFixed(2) + '%)\n';
+            document.querySelector('#debug-output').value += ' D: ' + d + ' (' + (100 * d / (w1 + w2 + d)).toFixed(2) + '%)\n';
+            moreTimes -= 1;
+            if (moreTimes > 0) {
+               document.querySelector('#debug-output').value += moreTimes + ' games to go . . .';
+               setTimeout(keepIterating, 0);
+            } else {
+               document.querySelector('#debug-output').value += 'Done!';
+            }
+         }());
       }, false);
 
       try {
