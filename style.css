@@ -65,19 +65,19 @@ h1 {
    width: 100px;
 }
 
-.space.a {
+.space.d {
    border-color: rgb(85, 170, 255);
 }
 
-.space.b {
+.space.g {
    border-color: rgb(170, 255, 85);
 }
 
-.space.c {
+.space.v {
    border-color: rgb(255, 85, 170);
 }
 
-.space.d {
+.space.z {
    border-color: rgb(170, 170, 170);
 }
 
@@ -85,15 +85,15 @@ h1 {
    border-style: dashed;
 }
 
-.space.f {
+.space.i {
    border-style: dotted;
 }
 
-.space.g {
+.space.o {
    border-style: solid;
 }
 
-.space.h {
+.space.u {
    border-style: double;
 }
 
