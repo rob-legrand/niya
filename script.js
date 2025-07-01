@@ -311,9 +311,9 @@ document.addEventListener('DOMContentLoaded', function () {
          localStorage.setItem('Niya', JSON.stringify(niyaGame));
 
          const gameboardElement = document.querySelector('#gameboard');
-         while (gameboardElement.hasChildNodes()) {
-            gameboardElement.lastChild.remove();
-         }
+         [...gameboardElement.childNodes].forEach(function (childNode) {
+            childNode.remove();
+         });
          niyaGame.board.forEach(function (row, whichRow) {
             const rowElement = document.createElement('div');
             rowElement.classList.add('row');
@@ -360,9 +360,9 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'visible'
          );
          const nextPlayerElement = document.querySelector('#next-player');
-         while (nextPlayerElement.hasChildNodes()) {
-            nextPlayerElement.lastChild.remove();
-         }
+         [...nextPlayerElement.childNodes].forEach(function (childNode) {
+            childNode.remove();
+         });
          const nextPlayerDiv = document.createElement('div');
          nextPlayerDiv.textContent = niyaGame.nextPlayer;
          nextPlayerDiv.classList.add('space');
@@ -376,9 +376,9 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'hidden'
          );
          const lastTileElement = document.querySelector('#last-tile');
-         while (lastTileElement.hasChildNodes()) {
-            lastTileElement.lastChild.remove();
-         }
+         [...lastTileElement.childNodes].forEach(function (childNode) {
+            childNode.remove();
+         });
          const lastTileDiv = document.createElement('div');
          lastTileDiv.classList.add('space');
          lastTileDiv.textContent = niyaGame.lastTile;
@@ -394,9 +394,9 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'hidden'
          );
          const resultElement = document.querySelector('#result');
-         while (resultElement.hasChildNodes()) {
-            resultElement.lastChild.remove();
-         }
+         [...resultElement.childNodes].forEach(function (childNode) {
+            childNode.remove();
+         });
          const resultDiv = document.createElement('div');
          resultDiv.classList.add('space');
          resultDiv.classList.add('token');
