@@ -32,7 +32,7 @@ h1 {
 
 .game-area {
    align-items: center;
-   background-color: rgb(255, 255, 170);
+   background-color: rgb(245, 250, 255);
    border-color: rgb(170, 170, 170);
    border-style: solid;
    border-width: 10px;
@@ -74,11 +74,11 @@ h1 {
 }
 
 .space.v {
-   border-color: rgb(255, 85, 170);
+   border-color: rgb(255, 170, 85);
 }
 
 .space.z {
-   border-color: rgb(170, 170, 170);
+   border-color: rgb(170, 85, 255);
 }
 
 .space.e {
@@ -108,9 +108,9 @@ h1 {
 }
 
 .space.token.player1 {
-   background-color: rgb(0, 85, 0);
+   background-color: rgb(0, 170, 85);
 }
 
 .space.token.player2 {
-   background-color: rgb(85, 0, 0);
+   background-color: rgb(170, 0, 85);
 }
