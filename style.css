@@ -118,54 +118,49 @@ h1 {
 
 @media screen and (prefers-color-scheme: dark) {
    body {
-      background-color: rgb(255, 250, 245);
-      color: rgb(30, 15, 0);
+      background-color: rgb(30, 15, 0);
+      color: rgb(255, 250, 245);
    }
 
    h1 {
-      color: rgb(30, 60, 90);
+      color: rgb(150, 180, 210);
    }
 
    .game-area {
-      background-color: rgb(245, 250, 255);
-      border-color: rgb(170, 170, 170);
+      background-color: rgb(90, 105, 120);
+      border-color: rgb(60, 60, 60);
    }
 
    .space {
-      background-color: rgb(85, 85, 85);
-      border-color: rgb(170, 170, 170);
-      color: rgb(255, 255, 255);
+      background-color: rgb(60, 60, 60);
+      border-color: rgb(120, 120, 120);
    }
 
    .space.d {
-      border-color: rgb(85, 170, 255);
+      border-color: rgb(60, 120, 180);
    }
 
    .space.g {
-      border-color: rgb(170, 255, 85);
+      border-color: rgb(120, 180, 60);
    }
 
    .space.v {
-      border-color: rgb(255, 170, 85);
+      border-color: rgb(180, 120, 60);
    }
 
    .space.z {
-      border-color: rgb(170, 85, 255);
-   }
-
-   .space.legal-move {
-      background-color: rgb(0, 0, 0);
+      border-color: rgb(120, 60, 180);
    }
 
    .space.token {
-      border-color: rgb(170, 170, 170);
+      border-color: rgb(45, 45, 45);
    }
 
    .space.token.player1 {
-      background-color: rgb(0, 170, 85);
+      background-color: rgb(0, 120, 60);
    }
 
    .space.token.player2 {
-      background-color: rgb(170, 0, 85);
+      background-color: rgb(120, 0, 60);
    }
 }
