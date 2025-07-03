@@ -12,6 +12,7 @@ html {
 body {
    align-items: center;
    background-color: rgb(255, 250, 245);
+   color: rgb(30, 15, 0);
    display: flex;
    flex-direction: column;
    font-family: Georgia, serif;
@@ -19,7 +20,7 @@ body {
 }
 
 h1 {
-   color: rgb(34, 68, 102);
+   color: rgb(30, 60, 90);
    text-align: center;
 }
 
@@ -113,4 +114,7 @@ h1 {
 
 .space.token.player2 {
    background-color: rgb(170, 0, 85);
+}
+
+@media screen and (prefers-color-scheme: dark) {
 }
