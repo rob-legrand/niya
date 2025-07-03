@@ -1,5 +1,9 @@
 @charset "UTF-8";
 
+:root {
+   color-scheme: dark light;
+}
+
 html {
    box-sizing: border-box;
    touch-action: manipulation;
