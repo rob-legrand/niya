@@ -15,8 +15,14 @@ html {
 
 body {
    align-items: center;
-   background-color: rgb(30, 15, 0);
-   color: rgb(255, 250, 245);
+   background-color: light-dark(
+      rgb(30, 15, 0),
+      rgb(30, 15, 0)
+   );
+   color: light-dark(
+      rgb(255, 250, 245),
+      rgb(255, 250, 245)
+   );
    display: flex;
    flex-direction: column;
    font-family: Georgia, serif;
@@ -24,7 +30,10 @@ body {
 }
 
 h1 {
-   color: rgb(150, 180, 210);
+   color: light-dark(
+      rgb(150, 180, 210),
+      rgb(150, 180, 210)
+   );
    text-align: center;
 }
 
@@ -37,8 +46,14 @@ h1 {
 
 .game-area {
    align-items: center;
-   background-color: rgb(90, 105, 120);
-   border-color: rgb(60, 60, 60);
+   background-color: light-dark(
+      rgb(90, 105, 120),
+      rgb(90, 105, 120)
+   );
+   border-color: light-dark(
+      rgb(60, 60, 60),
+      rgb(60, 60, 60)
+   );
    border-style: solid;
    border-width: 10px;
    display: flex;
@@ -57,8 +72,14 @@ h1 {
 
 .space {
    align-items: center;
-   background-color: rgb(60, 60, 60);
-   border-color: rgb(120, 120, 120);
+   background-color: light-dark(
+      rgb(60, 60, 60),
+      rgb(60, 60, 60)
+   );
+   border-color: light-dark(
+      rgb(120, 120, 120),
+      rgb(120, 120, 120)
+   );
    border-style: solid;
    border-width: 10px;
    color: rgb(255, 255, 255);
@@ -71,19 +92,31 @@ h1 {
 }
 
 .space.d {
-   border-color: rgb(60, 120, 180);
+   border-color: light-dark(
+      rgb(60, 120, 180),
+      rgb(60, 120, 180)
+   );
 }
 
 .space.g {
-   border-color: rgb(120, 180, 60);
+   border-color: light-dark(
+      rgb(120, 180, 60),
+      rgb(120, 180, 60)
+   );
 }
 
 .space.v {
-   border-color: rgb(180, 120, 60);
+   border-color: light-dark(
+      rgb(180, 120, 60),
+      rgb(180, 120, 60)
+   );
 }
 
 .space.z {
-   border-color: rgb(120, 60, 180);
+   border-color: light-dark(
+      rgb(120, 60, 180),
+      rgb(120, 60, 180)
+   );
 }
 
 .space.e {
@@ -108,16 +141,25 @@ h1 {
 }
 
 .space.token {
-   border-color: rgb(45, 45, 45);
+   border-color: light-dark(
+      rgb(45, 45, 45),
+      rgb(45, 45, 45)
+   );
    border-radius: 50px;
 }
 
 .space.token.player1 {
-   background-color: rgb(0, 120, 60);
+   background-color: light-dark(
+      rgb(0, 120, 60),
+      rgb(0, 120, 60)
+   );
 }
 
 .space.token.player2 {
-   background-color: rgb(120, 0, 60);
+   background-color: light-dark(
+      rgb(120, 0, 60),
+      rgb(120, 0, 60)
+   );
 }
 
 @media screen and (prefers-color-scheme: light) {
