@@ -377,10 +377,13 @@ document.addEventListener('DOMContentLoaded', function () {
                   spaceElement.classList.add('token');
                   spaceElement.classList.add('player' + space);
                }
-               if (niya.isLegalMove(niyaGame, {
-                  row: whichRow,
-                  column: whichColumn
-               })) {
+               if (niya.isLegalMove(
+                  niyaGame,
+                  {
+                     row: whichRow,
+                     column: whichColumn
+                  }
+               )) {
                   spaceElement.classList.add('legal-move');
                }
                rowElement.appendChild(spaceElement);
@@ -388,14 +391,20 @@ document.addEventListener('DOMContentLoaded', function () {
             gameboardElement.appendChild(rowElement);
          });
 
-         Array.from(gameboardElement.querySelectorAll('.row')).forEach(function (rowElement, whichRow) {
-            Array.from(rowElement.querySelectorAll('.space')).forEach(function (spaceElement, whichColumn) {
+         [...gameboardElement.querySelectorAll('.row')].forEach(function (rowElement, whichRow) {
+            [...rowElement.querySelectorAll('.space')].forEach(function (spaceElement, whichColumn) {
                spaceElement.addEventListener('click', function () {
-                  niyaGame = niya.makeMove(niyaGame, {
-                     row: whichRow,
-                     column: whichColumn
-                  });
-                  while (!niya.isGameOver(niyaGame) && document.querySelector('#ai-player' + niyaGame.nextPlayer).checked) {
+                  niyaGame = niya.makeMove(
+                     niyaGame,
+                     {
+                        row: whichRow,
+                        column: whichColumn
+                     }
+                  );
+                  while (
+                     !niya.isGameOver(niyaGame)
+                     && document.querySelector('#ai-player' + niyaGame.nextPlayer).checked
+                  ) {
                      niyaGame = niya.makeRandomMove(niyaGame);
                   }
                   updateNiyaGame();
@@ -463,30 +472,46 @@ document.addEventListener('DOMContentLoaded', function () {
 
       document.querySelector('#start-new-game').addEventListener('click', function () {
          niyaGame = niya.createGame();
-         while (!niya.isGameOver(niyaGame) && document.querySelector('#ai-player' + niyaGame.nextPlayer).checked) {
+         while (
+            !niya.isGameOver(niyaGame)
+            && document.querySelector('#ai-player' + niyaGame.nextPlayer).checked
+         ) {
             niyaGame = niya.makeRandomMove(niyaGame);
          }
          updateNiyaGame();
       });
 
       document.querySelector('#eval-moves').addEventListener('click', function () {
-         setTimeout(function () {
-            document.querySelector('#debug-output').value = niyaGame.board.map(function (row, whichRow) {
-               return row.map(function (ignore, whichColumn) {
-                  return (
-                     niya.isLegalMove(niyaGame, {
-                        row: whichRow,
-                        column: whichColumn
-                     })
-                     ? niya.valueToPlayer(niya.makeMove(niyaGame, {
-                        row: whichRow,
-                        column: whichColumn
-                     }), 1, 3)
-                     : '.'
-                  );
-               }).join(' ');
-            }).join('\n');
-         }, 0);
+         setTimeout(
+            function () {
+               document.querySelector('#debug-output').value = niyaGame.board.map(
+                  (row, whichRow) => row.map(
+                     (ignore, whichColumn) => (
+                        niya.isLegalMove(
+                           niyaGame,
+                           {
+                              row: whichRow,
+                              column: whichColumn
+                           }
+                        )
+                        ? niya.valueToPlayer(
+                           niya.makeMove(
+                              niyaGame,
+                              {
+                                 row: whichRow,
+                                 column: whichColumn
+                              }
+                           ),
+                           1,
+                           3
+                        )
+                        : '.'
+                     )
+                  ).join(' ')
+               ).join('\n');
+            },
+            0
+         );
       });
 
       document.querySelector('#sim-random').addEventListener('click', function () {
@@ -508,9 +533,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (niya.isGameDrawn(game)) {
                d += 1;
             }
-            document.querySelector('#debug-output').value = 'P1: ' + w1 + ' (' + (100 * w1 / (w1 + w2 + d)).toFixed(2) + '%)\n';
-            document.querySelector('#debug-output').value += 'P2: ' + w2 + ' (' + (100 * w2 / (w1 + w2 + d)).toFixed(2) + '%)\n';
-            document.querySelector('#debug-output').value += ' D: ' + d + ' (' + (100 * d / (w1 + w2 + d)).toFixed(2) + '%)\n';
+            document.querySelector('#debug-output').value = (
+               'P1: ' + w1 + ' (' + (100 * w1 / (w1 + w2 + d)).toFixed(2) + '%)\n'
+               + 'P2: ' + w2 + ' (' + (100 * w2 / (w1 + w2 + d)).toFixed(2) + '%)\n'
+               + ' D: ' + d + ' (' + (100 * d / (w1 + w2 + d)).toFixed(2) + '%)\n'
+            );
             moreTimes -= 1;
             if (moreTimes > 0) {
                document.querySelector('#debug-output').value += moreTimes + ' games to go . . .';
