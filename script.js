@@ -7,179 +7,215 @@ document.addEventListener('DOMContentLoaded', function () {
       const util = {
          createGame: function (oldGame) {
             const boardSize = 4;
+            const consonants = 'dgvz';
+            const vowels = 'eiou';
             const newGame = {
                board: (function () {
-                  let tiles = Array.from({length: boardSize * boardSize}).map(function (ignore, whichTile) {
-                     const consonants = 'dgvz';
-                     const vowels = 'eiou';
-                     return consonants.charAt(whichTile / boardSize) + vowels.charAt(whichTile % boardSize);
-                  });
-                  return Array.from({length: boardSize}).map(() => (
-                     Array.from({length: boardSize}).map(function () {
-                        const whichTile = Math.floor(Math.random() * tiles.length);
-                        const tile = tiles[whichTile];
-                        tiles = tiles.slice(0, whichTile).concat(tiles.slice(whichTile + 1));
-                        return tile;
-                     })
-                  ));
+                  let tiles;
+                  tiles = Array.from(
+                     {length: boardSize * boardSize},
+                     (ignore, whichTile) => (
+                        consonants.charAt(whichTile / boardSize)
+                        + vowels.charAt(whichTile % boardSize)
+                     )
+                  );
+                  return Array.from(
+                     {length: boardSize},
+                     () => Array.from(
+                        {length: boardSize},
+                        function () {
+                           const whichTile = Math.floor(Math.random() * tiles.length);
+                           const tile = tiles[whichTile];
+                           tiles = [
+                              ...tiles.slice(0, whichTile),
+                              ...tiles.slice(whichTile + 1)
+                           ];
+                           return tile;
+                        }
+                     )
+                  );
                }()),
                lastTile: 0,
                nextPlayer: 1
             };
             oldGame = (function deepCopy(oldThing) {
-               if (Array.isArray(oldThing)) {
-                  return oldThing.map(function (currentValue) {
-                     return deepCopy(currentValue);
-                  });
-               }
-               if (typeof oldThing === 'object') {
-                  return Object.keys(oldThing).reduce(function (newObject, prop) {
-                     newObject[prop] = deepCopy(oldThing[prop]);
-                     return newObject;
-                  }, {});
-               }
-               return oldThing;
+               return (
+                  Array.isArray(oldThing)
+                  ? oldThing.map(deepCopy)
+                  : typeof oldThing === 'object'
+                  ? Object.keys(oldThing).reduce(
+                     function (newObject, prop) {
+                        newObject[prop] = deepCopy(oldThing[prop]);
+                        return newObject;
+                     },
+                     {}
+                  )
+                  : oldThing
+               );
             }(oldGame));
             return (
                typeof oldGame === 'object'
-               ? Object.keys(newGame).reduce(function (newObject, prop) {
-                  newObject[prop] = (
-                     oldGame.hasOwnProperty(prop)
-                     ? oldGame[prop]
-                     : newGame[prop]
-                  );
-                  return newObject;
-               }, {})
+               ? Object.keys(newGame).reduce(
+                  function (newObject, prop) {
+                     newObject[prop] = (
+                        Object.hasOwn(oldGame, prop)
+                        ? oldGame[prop]
+                        : newGame[prop]
+                     );
+                     return newObject;
+                  },
+                  {}
+               )
                : newGame
             );
          },
          deepFreeze: function deepFreeze(oldThing) {
-            if (Array.isArray(oldThing)) {
-               return Object.freeze(oldThing.map(function (currentValue) {
-                  return deepFreeze(currentValue);
-               }));
-            }
-            if (typeof oldThing === 'object') {
-               return Object.freeze(Object.keys(oldThing).reduce(function (newObject, prop) {
-                  newObject[prop] = deepFreeze(oldThing[prop]);
-                  return newObject;
-               }, {}));
-            }
-            return oldThing;
+            return (
+               Array.isArray(oldThing)
+               ? Object.freeze(oldThing.map(
+                  (currentValue) => deepFreeze(currentValue)
+               ))
+               : typeof oldThing === 'object'
+               ? Object.freeze(Object.keys(oldThing).reduce(
+                  function (newObject, prop) {
+                     newObject[prop] = deepFreeze(oldThing[prop]);
+                     return newObject;
+                  },
+                  {}
+               ))
+               : oldThing
+            );
          },
-         wouldBeLegalMove: function (game, moveToMake) {
-            if (
+         wouldBeLegalMove: (game, moveToMake) => (
+            (
                typeof moveToMake !== 'object'
                || !Array.isArray(game.board[moveToMake.row])
                || typeof game.board[moveToMake.row][moveToMake.column] !== 'string'
-            ) {
-               return false;
-            }
-            if (typeof game.lastTile !== 'string') {
-               return (
-                  moveToMake.row === 0
-                  || moveToMake.row === game.board.length - 1
-                  || moveToMake.column === 0
-                  || moveToMake.column === game.board[0].length - 1
-               );
-            }
-            return (
+            )
+            ? false
+            : typeof game.lastTile !== 'string'
+            ? (
+               moveToMake.row === 0
+               || moveToMake.row === game.board.length - 1
+               || moveToMake.column === 0
+               || moveToMake.column === game.board[0].length - 1
+            )
+            : (
                game.board[moveToMake.row][moveToMake.column].charAt(0) === game.lastTile.charAt(0)
                || game.board[moveToMake.row][moveToMake.column].charAt(1) === game.lastTile.charAt(1)
-            );
-         }
+            )
+         )
       };
 
       const self = {
-         createGame: function (oldGame) {
-            return util.deepFreeze(util.createGame(oldGame));
-         },
+         createGame: (oldGame) => util.deepFreeze(util.createGame(oldGame)),
          hasPlayerWon: function (game, player) {
             // row:
-            if (game.board.some((row) => row.every((space) => space === player))) {
+            if (game.board.some(
+               (row) => row.every(
+                  (space) => space === player
+               )
+            )) {
                return true;
             }
             // column:
-            if (game.board.reduce(function (columnWonSoFar, row) {
-               return row.map(function (space, whichColumn) {
-                  return (
+            if (game.board.reduce(
+               (columnWonSoFar, row) => row.map(
+                  (space, whichColumn) => (
                      columnWonSoFar[whichColumn] === space
                      ? space
                      : 0
-                  );
-               });
-            }).some(function (columnWon) {
-               return columnWon === player;
-            })) {
+                  )
+               )
+            ).some(
+               (columnWon) => columnWon === player
+            )) {
                return true;
             }
             // column (another way):
-            if (game.board.reduce(function (columnWonSoFar, row) {
-               return row.map(function (space, whichColumn) {
-                  return columnWonSoFar[whichColumn] && space === player;
-               });
-            }, game.board[0].map(function () {
-               return true;
-            })).some(function (columnWon) {
-               return columnWon;
-            })) {
+            if (game.board.reduce(
+               (columnWonSoFar, row) => row.map(
+                  (space, whichColumn) => columnWonSoFar[whichColumn] && space === player
+               ),
+               game.board[0].map(() => true)
+            ).some(
+               (columnWon) => columnWon
+            )) {
                return true;
             }
             // column (another way):
-            if (game.board[0].some(function (space, whichColumn) {
-               return game.board.every(function (row) {
-                  return row.some(function (spaceNow, whichColumnNow) {
-                     return whichColumn === whichColumnNow && space === player && spaceNow === player;
-                  });
-               });
-            })) {
+            if (game.board[0].some(
+               (space, whichColumn) => game.board.every(
+                  (row) => row.some(
+                     (spaceNow, whichColumnNow) => whichColumn === whichColumnNow && space === player && spaceNow === player
+                  )
+               )
+            )) {
                return true;
             }
             // diagonals:
-            if (game.board.map(function (row, whichRow) {
-               return row[whichRow];
-            }).every(function (space) {
-               return space === player;
-            })) {
+            if (game.board.map(
+               (row, whichRow) => row[whichRow]
+            ).every(
+               (space) => space === player
+            )) {
                return true;
             }
-            if (game.board.map(function (row, whichRow) {
-               return row[row.length - whichRow - 1];
-            }).every(function (space) {
-               return space === player;
-            })) {
+            if (game.board.map(
+               (row, whichRow) => row[row.length - whichRow - 1]
+            ).every(
+               (space) => space === player
+            )) {
                return true;
             }
             // 2x2 squares:
-            if (game.board.some(function (row, whichRow) {
-               return row.some(function (space, whichColumn) {
-                  return space === player && row[whichColumn + 1] === player && game.board[whichRow + 1] && game.board[whichRow + 1][whichColumn] === player && game.board[whichRow + 1][whichColumn + 1] === player;
-               });
-            })) {
+            if (game.board.some(
+               (row, whichRow) => row.some(
+                  (space, whichColumn) => (
+                     space === player
+                     && row[whichColumn + 1] === player
+                     && game.board[whichRow + 1]
+                     && game.board[whichRow + 1][whichColumn] === player
+                     && game.board[whichRow + 1][whichColumn + 1] === player
+                  )
+               )
+            )) {
                return true;
             }
             // opponent trapped:
-            if (game.nextPlayer !== player && self.numAvailableSpaces(game) > 0 && !game.board.some(function (row, whichRow) {
-               return row.some(function (ignore, whichColumn) {
-                  return util.wouldBeLegalMove(game, {
-                     row: whichRow,
-                     column: whichColumn
-                  });
-               });
-            })) {
+            if (
+               game.nextPlayer !== player
+               && self.numAvailableSpaces(game) > 0
+               && !game.board.some(
+                  (row, whichRow) => row.some(
+                     (ignore, whichColumn) => util.wouldBeLegalMove(
+                        game,
+                        {
+                           row: whichRow,
+                           column: whichColumn
+                        }
+                     )
+                  )
+               )
+            ) {
                return true;
             }
             return false;
          },
-         isGameDrawn: function (game) {
-            return self.numAvailableSpaces(game) === 0 && !self.hasPlayerWon(game, 1) && !self.hasPlayerWon(game, 2);
-         },
-         isGameOver: function (game) {
-            return self.hasPlayerWon(game, 1) || self.hasPlayerWon(game, 2) || self.numAvailableSpaces(game) === 0;
-         },
-         isLegalMove: function (game, moveToMake) {
-            return !self.isGameOver(game) && util.wouldBeLegalMove(game, moveToMake);
-         },
+         isGameDrawn: (game) => (
+            self.numAvailableSpaces(game) === 0
+            && !self.hasPlayerWon(game, 1)
+            && !self.hasPlayerWon(game, 2)
+         ),
+         isGameOver: (game) => (
+            self.hasPlayerWon(game, 1)
+            || self.hasPlayerWon(game, 2)
+            || self.numAvailableSpaces(game) === 0
+         ),
+         isLegalMove: (game, moveToMake) => (
+            !self.isGameOver(game)
+            && util.wouldBeLegalMove(game, moveToMake)
+         ),
          makeMove: function (oldGame, moveToMake) {
             if (!self.isLegalMove(oldGame, moveToMake)) {
                return oldGame;
@@ -222,58 +258,64 @@ document.addEventListener('DOMContentLoaded', function () {
             ));
             return self.makeMove(game, moveToMake);
          },
-         numAvailableSpaces: function (game) {
-            return game.board.reduce(function (matrixSumSoFar, row) {
-               return row.reduce((rowSumSoFar, space) => (
-                  rowSumSoFar + (
-                     typeof space === 'string'
-                     ? 1
-                     : 0
-                  )
-               ), matrixSumSoFar);
-            }, 0);
-         },
-         numMovesMade: function (game) {
-            return game.board.reduce(function (matrixSumSoFar, row) {
-               return row.reduce(function (rowSumSoFar, space) {
-                  return rowSumSoFar + (
-                     typeof space === 'string'
-                     ? 0
-                     : 1
-                  );
-               }, matrixSumSoFar);
-            }, 0);
-         },
+         numAvailableSpaces: (game) => game.board.reduce(
+            (matrixSumSoFar, row) => row.reduce(
+               (rowSumSoFar, space) => rowSumSoFar + (
+                  typeof space === 'string'
+                  ? 1
+                  : 0
+               ),
+               matrixSumSoFar
+            ),
+            0
+         ),
+         numMovesMade: (game) => game.board.reduce(
+            (matrixSumSoFar, row) => row.reduce(
+               (rowSumSoFar, space) => rowSumSoFar + (
+                  typeof space === 'string'
+                  ? 0
+                  : 1
+               ),
+               matrixSumSoFar
+            ),
+            0
+         ),
          valueToPlayer: function (game, player, depth) {
+            let bestValue;
             if (self.hasPlayerWon(game, player)) {
                return (self.numAvailableSpaces(game) + 1) * 1000;
             }
-            if (self.hasPlayerWon(game, (
-               player === 1
-               ? 2
-               : 1
-            ))) {
+            if (self.hasPlayerWon(
+               game,
+               (
+                  player === 1
+                  ? 2
+                  : 1
+               )
+            )) {
                return -(self.numAvailableSpaces(game) + 1) * 1000;
             }
             if (self.isGameDrawn(game)) {
                return 0;
             }
-            let bestValue;
             if (depth <= 0) {
                bestValue = 0;
                // rows
                game.board.forEach(function (row) {
                   bestValue += (function (counts) {
                      return counts[0] - counts[1];
-                  }(row.reduce(function (valueSoFar, space) {
-                     return (
-                        typeof space === 'string'
-                        ? valueSoFar
-                        : space === player
-                        ? [valueSoFar[0] * 5, 0]
-                        : [0, valueSoFar[1] * 5]
-                     );
-                  }, [1, 1])));
+                  }(
+                     row.reduce(
+                        (valueSoFar, space) => (
+                           typeof space === 'string'
+                           ? valueSoFar
+                           : space === player
+                           ? [valueSoFar[0] * 5, 0]
+                           : [0, valueSoFar[1] * 5]
+                        ),
+                        [1, 1]
+                     )
+                  ));
                });
                // FIXME also do columns, diagonals, 2x2 squares
                return bestValue;
@@ -285,10 +327,17 @@ document.addEventListener('DOMContentLoaded', function () {
             );
             game.board.forEach(function (row, whichRow) {
                row.forEach(function (ignore, whichColumn) {
-                  const newValue = self.valueToPlayer(self.makeMove(game, {
-                     row: whichRow,
-                     column: whichColumn
-                  }), player, depth - 1);
+                  const newValue = self.valueToPlayer(
+                     self.makeMove(
+                        game,
+                        {
+                           row: whichRow,
+                           column: whichColumn
+                        }
+                     ),
+                     player,
+                     depth - 1
+                  );
                   if (
                      game.nextPlayer === player
                      ? newValue > bestValue
