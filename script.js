@@ -362,9 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
          localStorage.setItem(localStorageKey, JSON.stringify(niyaGame));
 
          const gameboardElement = document.querySelector('#gameboard');
-         [...gameboardElement.childNodes].forEach(function (childNode) {
-            childNode.remove();
-         });
+         gameboardElement.replaceChildren();
          niyaGame.board.forEach(function (row, whichRow) {
             const rowElement = document.createElement('div');
             rowElement.classList.add('row');
@@ -420,9 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'visible'
          );
          const nextPlayerElement = document.querySelector('#next-player');
-         [...nextPlayerElement.childNodes].forEach(function (childNode) {
-            childNode.remove();
-         });
+         nextPlayerElement.replaceChildren();
          const nextPlayerDiv = document.createElement('div');
          nextPlayerDiv.textContent = niyaGame.nextPlayer;
          nextPlayerDiv.classList.add('space');
@@ -436,9 +432,7 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'hidden'
          );
          const lastTileElement = document.querySelector('#last-tile');
-         [...lastTileElement.childNodes].forEach(function (childNode) {
-            childNode.remove();
-         });
+         lastTileElement.replaceChildren();
          const lastTileDiv = document.createElement('div');
          lastTileDiv.classList.add('space');
          lastTileDiv.textContent = niyaGame.lastTile;
@@ -454,9 +448,7 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'hidden'
          );
          const resultElement = document.querySelector('#result');
-         [...resultElement.childNodes].forEach(function (childNode) {
-            childNode.remove();
-         });
+         resultElement.replaceChildren();
          const resultDiv = document.createElement('div');
          resultDiv.classList.add('space');
          resultDiv.classList.add('token');
