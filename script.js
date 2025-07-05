@@ -356,8 +356,10 @@ document.addEventListener('DOMContentLoaded', function () {
    (function () {
       let niyaGame;
 
+      const localStorageKey = 'niya';
+
       const updateNiyaGame = function () {
-         localStorage.setItem('Niya', JSON.stringify(niyaGame));
+         localStorage.setItem(localStorageKey, JSON.stringify(niyaGame));
 
          const gameboardElement = document.querySelector('#gameboard');
          [...gameboardElement.childNodes].forEach(function (childNode) {
@@ -549,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
 
       try {
-         niyaGame = niya.createGame(JSON.parse(localStorage.getItem('Niya')));
+         niyaGame = niya.createGame(JSON.parse(localStorage.getItem(localStorageKey)));
       } catch (ignore) {
          niyaGame = niya.createGame();
       }
