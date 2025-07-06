@@ -69,6 +69,27 @@ document.addEventListener('DOMContentLoaded', function () {
                : newGame
             );
          },
+         deepCopy: (oldThing, func) => (
+            // Create a new object, deeply copied, with func applied at each level.
+            typeof func === 'function'
+            ? func
+            : (x) => x
+         )(
+            Array.isArray(oldThing)
+            // If it's an array, use map directly.
+            ? oldThing.map(
+               (x) => util.deepCopy(x, func)
+            )
+            : typeof oldThing === 'object'
+            // If it's a non-array object, we must be less direct.
+            ? Object.fromEntries(
+               Object.entries(oldThing).map(
+                  (x) => [x[0], util.deepCopy(x[1], func)]
+               )
+            )
+            // Otherwise, no recursion is required.
+            : oldThing
+         ),
          deepFreeze: function deepFreeze(oldThing) {
             return (
                Array.isArray(oldThing)
