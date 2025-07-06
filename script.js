@@ -362,34 +362,41 @@ document.addEventListener('DOMContentLoaded', function () {
          localStorage.setItem(localStorageKey, JSON.stringify(niyaGame));
 
          const gameboardElement = document.querySelector('#gameboard');
-         gameboardElement.replaceChildren();
-         niyaGame.board.forEach(function (row, whichRow) {
-            const rowElement = document.createElement('div');
-            rowElement.classList.add('row');
-            row.forEach(function (space, whichColumn) {
-               const spaceElement = document.createElement('div');
-               spaceElement.classList.add('space');
-               spaceElement.textContent = space;
-               if (typeof space === 'string') {
-                  spaceElement.classList.add(space.charAt(0));
-                  spaceElement.classList.add(space.charAt(1));
-               } else if (typeof space === 'number') {
-                  spaceElement.classList.add('token');
-                  spaceElement.classList.add('player' + space);
+         gameboardElement.replaceChildren(
+            ...niyaGame.board.map(
+               function (row, whichRow) {
+                  const rowElement = document.createElement('div');
+                  rowElement.classList.add('row');
+                  rowElement.replaceChildren(
+                     ...row.map(
+                        function (space, whichColumn) {
+                           const spaceElement = document.createElement('div');
+                           spaceElement.classList.add('space');
+                           spaceElement.textContent = space;
+                           if (typeof space === 'string') {
+                              spaceElement.classList.add(space.charAt(0));
+                              spaceElement.classList.add(space.charAt(1));
+                           } else if (typeof space === 'number') {
+                              spaceElement.classList.add('token');
+                              spaceElement.classList.add('player' + space);
+                           }
+                           if (niya.isLegalMove(
+                              niyaGame,
+                              {
+                                 row: whichRow,
+                                 column: whichColumn
+                              }
+                           )) {
+                              spaceElement.classList.add('legal-move');
+                           }
+                           return spaceElement;
+                        }
+                     )
+                  );
+                  return rowElement;
                }
-               if (niya.isLegalMove(
-                  niyaGame,
-                  {
-                     row: whichRow,
-                     column: whichColumn
-                  }
-               )) {
-                  spaceElement.classList.add('legal-move');
-               }
-               rowElement.appendChild(spaceElement);
-            });
-            gameboardElement.appendChild(rowElement);
-         });
+            )
+         );
 
          [...gameboardElement.querySelectorAll('.row')].forEach(function (rowElement, whichRow) {
             [...rowElement.querySelectorAll('.space')].forEach(function (spaceElement, whichColumn) {
@@ -418,13 +425,12 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'visible'
          );
          const nextPlayerElement = document.querySelector('#next-player');
-         nextPlayerElement.replaceChildren();
          const nextPlayerDiv = document.createElement('div');
          nextPlayerDiv.textContent = niyaGame.nextPlayer;
          nextPlayerDiv.classList.add('space');
          nextPlayerDiv.classList.add('token');
          nextPlayerDiv.classList.add('player' + niyaGame.nextPlayer);
-         nextPlayerElement.appendChild(nextPlayerDiv);
+         nextPlayerElement.replaceChildren(nextPlayerDiv);
 
          document.querySelector('#last-tile-area').style.visibility = (
             niya.numMovesMade(niyaGame) > 0
@@ -432,7 +438,6 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'hidden'
          );
          const lastTileElement = document.querySelector('#last-tile');
-         lastTileElement.replaceChildren();
          const lastTileDiv = document.createElement('div');
          lastTileDiv.classList.add('space');
          lastTileDiv.textContent = niyaGame.lastTile;
@@ -440,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
             lastTileDiv.classList.add(niyaGame.lastTile.charAt(0));
             lastTileDiv.classList.add(niyaGame.lastTile.charAt(1));
          }
-         lastTileElement.appendChild(lastTileDiv);
+         lastTileElement.replaceChildren(lastTileDiv);
 
          document.querySelector('#result-area').style.visibility = (
             niya.isGameOver(niyaGame)
@@ -448,7 +453,6 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'hidden'
          );
          const resultElement = document.querySelector('#result');
-         resultElement.replaceChildren();
          const resultDiv = document.createElement('div');
          resultDiv.classList.add('space');
          resultDiv.classList.add('token');
@@ -461,7 +465,7 @@ document.addEventListener('DOMContentLoaded', function () {
          } else if (niya.isGameDrawn(niyaGame)) {
             resultDiv.textContent = 'draw';
          }
-         resultElement.appendChild(resultDiv);
+         resultElement.replaceChildren(resultDiv);
       };
 
       document.querySelector('#start-new-game').addEventListener('click', function () {
