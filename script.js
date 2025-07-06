@@ -38,21 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
                lastTile: 0,
                nextPlayer: 1
             };
-            oldGame = (function deepCopy(oldThing) {
-               return (
-                  Array.isArray(oldThing)
-                  ? oldThing.map(deepCopy)
-                  : typeof oldThing === 'object'
-                  ? Object.keys(oldThing).reduce(
-                     function (newObject, prop) {
-                        newObject[prop] = deepCopy(oldThing[prop]);
-                        return newObject;
-                     },
-                     {}
-                  )
-                  : oldThing
-               );
-            }(oldGame));
+            oldGame = util.deepCopy(oldGame);
             return (
                typeof oldGame === 'object'
                ? Object.keys(newGame).reduce(
