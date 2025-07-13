@@ -76,23 +76,17 @@ document.addEventListener('DOMContentLoaded', function () {
             // Otherwise, no recursion is required.
             : oldThing
          ),
-         deepFreeze: function deepFreeze(oldThing) {
-            return (
-               Array.isArray(oldThing)
-               ? Object.freeze(oldThing.map(
-                  (currentValue) => deepFreeze(currentValue)
-               ))
-               : typeof oldThing === 'object'
-               ? Object.freeze(Object.keys(oldThing).reduce(
-                  function (newObject, prop) {
-                     newObject[prop] = deepFreeze(oldThing[prop]);
-                     return newObject;
-                  },
-                  {}
-               ))
-               : oldThing
-            );
-         },
+         deepFreeze: (oldThing) => Object.freeze(
+            Array.isArray(oldThing)
+            ? oldThing.map(util.deepFreeze)
+            : typeof oldThing === 'object'
+            ? Object.fromEntries(
+               Object.entries(oldThing).map(
+                  (x) => [x[0], util.deepFreeze(x[1])]
+               )
+            )
+            : oldThing
+         ),
          wouldBeLegalMove: (game, moveToMake) => (
             (
                typeof moveToMake !== 'object'
